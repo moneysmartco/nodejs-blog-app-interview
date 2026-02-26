@@ -1,45 +1,50 @@
-const db = require('../db/database');
+const BaseModel = require('./BaseModel');
 
-const Author = {
+class Author extends BaseModel {
+  constructor() {
+    super('authors');
+  }
+
   findAll() {
-    return db.prepare(`
+    return this.db.prepare(`
       SELECT a.id, a.bio, a.created_at,
              u.id as user_id, u.name, u.email
       FROM authors a
       JOIN users u ON u.id = a.user_id
     `).all();
-  },
+  }
 
   findById(id) {
-    return db.prepare(`
+    return this.db.prepare(`
       SELECT a.id, a.bio, a.created_at,
              u.id as user_id, u.name, u.email
       FROM authors a
       JOIN users u ON u.id = a.user_id
       WHERE a.id = ?
     `).get(id);
-  },
+  }
 
   findByUserId(userId) {
-    return db.prepare(`
+    return this.db.prepare(`
       SELECT a.id, a.bio, a.created_at,
              u.id as user_id, u.name, u.email
       FROM authors a
       JOIN users u ON u.id = a.user_id
       WHERE a.user_id = ?
     `).get(userId);
-  },
+  }
 
   create({ user_id, bio }) {
-    const stmt = db.prepare('INSERT INTO authors (user_id, bio) VALUES (?, ?)');
-    const result = stmt.run(user_id, bio || null);
+    const result = this.db.prepare(
+      'INSERT INTO authors (user_id, bio) VALUES (?, ?)'
+    ).run(user_id, bio || null);
     return this.findById(result.lastInsertRowid);
-  },
+  }
 
   update(id, { bio }) {
-    db.prepare('UPDATE authors SET bio = ? WHERE id = ?').run(bio, id);
+    this.db.prepare('UPDATE authors SET bio = ? WHERE id = ?').run(bio, id);
     return this.findById(id);
-  },
-};
+  }
+}
 
-module.exports = Author;
+module.exports = new Author();

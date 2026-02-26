@@ -1,23 +1,34 @@
-const db = require('../db/database');
+const BaseModel = require('./BaseModel');
 
-const User = {
+class User extends BaseModel {
+  constructor() {
+    super('users');
+  }
+
   findAll() {
-    return db.prepare('SELECT id, name, email, created_at FROM users').all();
-  },
+    return this.db.prepare(
+      'SELECT id, name, email, created_at FROM users'
+    ).all();
+  }
 
   findById(id) {
-    return db.prepare('SELECT id, name, email, created_at FROM users WHERE id = ?').get(id);
-  },
+    return this.db.prepare(
+      'SELECT id, name, email, created_at FROM users WHERE id = ?'
+    ).get(id);
+  }
 
   findByEmail(email) {
-    return db.prepare('SELECT id, name, email, created_at FROM users WHERE email = ?').get(email);
-  },
+    return this.db.prepare(
+      'SELECT id, name, email, created_at FROM users WHERE email = ?'
+    ).get(email);
+  }
 
   create({ name, email, password }) {
-    const stmt = db.prepare('INSERT INTO users (name, email, password) VALUES (?, ?, ?)');
-    const result = stmt.run(name, email, password);
+    const result = this.db.prepare(
+      'INSERT INTO users (name, email, password) VALUES (?, ?, ?)'
+    ).run(name, email, password);
     return this.findById(result.lastInsertRowid);
-  },
+  }
 
   update(id, { name, email }) {
     const fields = [];
@@ -29,13 +40,9 @@ const User = {
     if (fields.length === 0) return this.findById(id);
 
     values.push(id);
-    db.prepare(`UPDATE users SET ${fields.join(', ')} WHERE id = ?`).run(...values);
+    this.db.prepare(`UPDATE users SET ${fields.join(', ')} WHERE id = ?`).run(...values);
     return this.findById(id);
-  },
+  }
+}
 
-  delete(id) {
-    return db.prepare('DELETE FROM users WHERE id = ?').run(id);
-  },
-};
-
-module.exports = User;
+module.exports = new User();
