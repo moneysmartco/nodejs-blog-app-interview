@@ -15,18 +15,6 @@ The database file `blog.db` is created automatically on first run and seeded wit
 
 ---
 
-## Data Model
-
-```
-User ──< Author ──< Article
-```
-
-- A **User** is anyone with an account (name, email, password).
-- An **Author** is a User who has been promoted to write articles (has a bio).
-- An **Article** belongs to an Author and has a `draft` / `published` status.
-
----
-
 ## API Reference
 
 ### Users
@@ -111,15 +99,3 @@ src/
 └── middleware/
     └── errorHandler.js
 ```
-
-## Ideas for Extension
-
-- Add JWT authentication (login / register flow)
-- Add pagination to list endpoints
-- Add `tags` or `categories` to articles (many-to-many)
-- Add comments (Comment model → Article)
-- Add search / full-text search on articles
-- Add image upload for article cover photos
-- Add rate limiting middleware
-- Add input validation with `zod` or `joi`
-- Write tests with `vitest` or `jest` + `supertest`
